@@ -1,0 +1,8 @@
+int a = 12 + 5;
+
+// thats comment
+
+/*
+ * thats another comment
+ *
+ */

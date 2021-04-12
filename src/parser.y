@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../src/config.h"
+
 /************************
 ---       bison       ---
 ************************/
@@ -49,6 +51,7 @@ void OUT_NEWLINE();
 %token<c_value> _ID
 %token<c_value> _INT
 %token<c_value> _FLOAT
+%token<c_value> _TYPE
 
 %token _PLUS _MINUS _MULTIPLY _DIVIDE _BR_OPEN _BR_CLOSE
 
@@ -82,7 +85,7 @@ figured_stmts:
 ;
 
 stmt:
-  _ID _EQUAL { OUT("%s = ", $1); } expr
+  _TYPE _ID _EQUAL { OUT("%s %s = ", $1, $2); } expr
 | expr
 ;
 
@@ -142,17 +145,21 @@ func_args:
 %%
 
 int main() {
-  yyin          = fopen("examples/code2", "r");
+  yyin          = fopen("examples/code3", "r");
   parser_output = fopen("output", "w");
 
   yyparse();
+
+  #ifdef DEBUG_LEX
+  printf("\n");
+  #endif
 
   fclose(yyin);
   fclose(parser_output);
 }
 
 void yyerror(const char* s) {
-  fprintf(stderr, "Parse error: %s\n", s);
+  fprintf(stderr, "Bison error: %s\n", s);
   exit(1);
 }
 
