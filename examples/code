@@ -1,0 +1,23 @@
+int a = 12 + 5;
+
+if (a > 13) {
+  a = 22.2;
+} else {
+  a = 11.5;
+}
+
+if (a == 11.5)
+  a = a + 2;
+else
+  a = a + 5;
+
+while (a < 40) {
+  a = a * 5;
+}
+
+while (a > 0)
+  a = a - 2;
+
+for (float i = 6; i < 24.5; i = i + 0.5) {
+  a = a - i;
+}

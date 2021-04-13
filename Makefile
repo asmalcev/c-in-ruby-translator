@@ -1,4 +1,4 @@
-GCC = g++
+GCC         = g++
 BUILD_FLAGS = -std=c++17
 
 SRC_DIR   = src
