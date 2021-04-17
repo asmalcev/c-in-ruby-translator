@@ -85,9 +85,14 @@ figured_stmts:
 ;
 
 stmt:
-| _TYPE _ID _EQUAL { OUT("%s = ", $2); } expr
-| _ID _EQUAL       { OUT("%s = ", $1); } expr
+| _TYPE addition_type _ID _EQUAL { OUT("%s = ", $3); } expr
+| _ID _EQUAL                     { OUT("%s = ", $1); } expr
+| _TYPE addition_type _ID
 | expr
+;
+
+addition_type:
+| _TYPE addition_type
 ;
 
 cond_stmt:
@@ -99,7 +104,7 @@ cond_stmt:
 | _IF rounded_expr stmt _SEMILICON { OUT_NEWLINE(); OUT("else"); OUT_NEWLINE(); }
   else_stmt                        { OUT_NEWLINE(); OUT("end");  OUT_NEWLINE(); }
 
-| _IF rounded_expr stmt _SEMILICON { OUT_NEWLINE(); }
+| _IF rounded_expr stmt _SEMILICON { OUT_NEWLINE(); OUT("end");  OUT_NEWLINE(); }
 ;
 
 else_stmt:
@@ -109,14 +114,24 @@ else_stmt:
 
 while_stmt:
   _WHILE rounded_expr figured_stmts   { OUT("end"); OUT_NEWLINE(); }
+
 | _WHILE rounded_expr stmt _SEMILICON { OUT_NEWLINE(); OUT("end"); OUT_NEWLINE(); }
 ;
 
 for_stmt:
-  _FOR _BR_OPEN stmt _SEMILICON { OUT_NEWLINE(); OUT("while ");              }
-  stmt _SEMILICON               { OUT_NEWLINE(); buffer_mode_active = true;  }
-  stmt _BR_CLOSE                { OUT_NEWLINE(); buffer_mode_active = false; }
-  figured_stmts { OUT_BUFFER(); OUT("end"); OUT_NEWLINE(); }
+  for_while_stmt
+  stmt _SEMILICON { OUT_NEWLINE(); buffer_mode_active = true;  }
+  stmt _BR_CLOSE  { OUT_NEWLINE(); buffer_mode_active = false; }
+  stmt_code       { OUT_BUFFER(); OUT("end"); OUT_NEWLINE(); }
+;
+
+stmt_code:
+  figured_stmts
+| stmt _SEMILICON
+;
+
+for_while_stmt:
+  _FOR _BR_OPEN stmt _SEMILICON { OUT_NEWLINE(); OUT("while "); }
 ;
 
 expr:
@@ -157,7 +172,7 @@ func_call:
 ;
 
 func_args:
-|  expr _COMMA { OUT(", "); } func_args
+| expr _COMMA { OUT(", "); } func_args
 | expr
 ;
 
@@ -167,7 +182,7 @@ int main() {
   yyin          = fopen("examples/code", "r");
   parser_output = fopen("output.rb", "w");
 
-  buffer = (char *) malloc(1000);
+  buffer = (char *) malloc(BUFFER_SIZE);
 
   yyparse();
 
@@ -193,6 +208,7 @@ void OUT_NEWLINE() {
 }
 
 void OUT(const char * fmt...) {
+  // variadic function in printf style for printing in file
   va_list args;
   va_start(args, fmt);
 
@@ -206,6 +222,7 @@ void OUT(const char * fmt...) {
 }
 
 void OUT_BUFFER() {
-  fprintf(parser_output, buffer);
+  // output buffer to target file and clear it
+  fprintf(parser_output, "%s", buffer);
   buffer[0] = '\0';
 }

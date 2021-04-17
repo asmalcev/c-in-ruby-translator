@@ -20,16 +20,18 @@ digit          [0-9]
 alpha          [a-zA-Z_]
 digit_or_alpha [a-zA-Z0-9_]
 
-%x C_COMMENT
+type char|short|signed|unsigned|int|long|float|double
+
+%x COMMENT
 
 %%
 
 \/\/[^\n]*\n? { LOG("COMMENT %s", yytext); }
 
-"/*"            { BEGIN(C_COMMENT); LOG("COMMENT %s", yytext); }
-<C_COMMENT>"*/" { BEGIN(INITIAL);   LOG("%s", yytext); }
-<C_COMMENT>\n   { }
-<C_COMMENT>.    {                   LOG("%s", yytext); }
+"/*"            { BEGIN(COMMENT); LOG("COMMENT %s", yytext); }
+<COMMENT>"*/" { BEGIN(INITIAL);   LOG("%s", yytext); }
+<COMMENT>\n   { }
+<COMMENT>.    {                   LOG("%s", yytext); }
 
 [ \t\n] ; // ignore all whitespaces and breaklines
 
@@ -38,14 +40,7 @@ digit_or_alpha [a-zA-Z0-9_]
 "while" { LOG("WHILE "); return _WHILE; }
 "for"   { LOG("FOR ");   return _FOR;   }
 
-"char"     { LOG("CHAR ");     sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"short"    { LOG("SHORT ");    sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"signed"   { LOG("SIGNED ");   sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"unsigned" { LOG("UNSIGNED "); sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"int"      { LOG("INT ");      sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"long"     { LOG("LONG ");     sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"float"    { LOG("FLOAT ");    sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
-"double"   { LOG("DOUBLE ");   sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
+{type} { LOG("TYPE %s", yytext); sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
 
 {alpha}{digit_or_alpha}* {
   LOG("ID %s ", yytext);

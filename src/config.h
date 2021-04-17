@@ -6,4 +6,6 @@
 
 #define NUM_AS_STR
 
+#define BUFFER_SIZE 1000
+
 #endif
