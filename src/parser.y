@@ -56,7 +56,7 @@ bool buffer_mode_active = false;
 
 %token _LESS _MORE _EQUALS _nEQUALS _LoE _MoE _EQUAL _AND _OR _NOT
 
-%token _COMMA _SEMILICON _fBR_OPEN _fBR_CLOSE
+%token _COMMA _SEMICOLON _fBR_OPEN _fBR_CLOSE
 
 %left _EQUALS _nEQUALS
 %left _LoE _MoE _LESS _MORE
@@ -72,7 +72,7 @@ program:
 ;
 
 stmts:
-| stmt _SEMILICON { OUT_NEWLINE(); } stmts
+| stmt _SEMICOLON { OUT_NEWLINE(); } stmts
 | { OUT("if"); }    cond_stmt  stmts
 | { OUT("while"); } while_stmt stmts
 |                   for_stmt   stmts
@@ -101,37 +101,37 @@ cond_stmt:
 
 | _IF rounded_expr figured_stmts { OUT("end"); OUT_NEWLINE(); }
 
-| _IF rounded_expr stmt _SEMILICON { OUT_NEWLINE(); OUT("else"); OUT_NEWLINE(); }
+| _IF rounded_expr stmt _SEMICOLON { OUT_NEWLINE(); OUT("else"); OUT_NEWLINE(); }
   else_stmt                        { OUT_NEWLINE(); OUT("end");  OUT_NEWLINE(); }
 
-| _IF rounded_expr stmt _SEMILICON { OUT_NEWLINE(); OUT("end");  OUT_NEWLINE(); }
+| _IF rounded_expr stmt _SEMICOLON { OUT_NEWLINE(); OUT("end");  OUT_NEWLINE(); }
 ;
 
 else_stmt:
   _ELSE figured_stmts
-| _ELSE stmt _SEMILICON
+| _ELSE stmt _SEMICOLON
 ;
 
 while_stmt:
   _WHILE rounded_expr figured_stmts   { OUT("end"); OUT_NEWLINE(); }
 
-| _WHILE rounded_expr stmt _SEMILICON { OUT_NEWLINE(); OUT("end"); OUT_NEWLINE(); }
+| _WHILE rounded_expr stmt _SEMICOLON { OUT_NEWLINE(); OUT("end"); OUT_NEWLINE(); }
 ;
 
 for_stmt:
   for_while_stmt
-  stmt _SEMILICON { OUT_NEWLINE(); buffer_mode_active = true;  }
+  stmt _SEMICOLON { OUT_NEWLINE(); buffer_mode_active = true;  }
   stmt _BR_CLOSE  { OUT_NEWLINE(); buffer_mode_active = false; }
   stmt_code       { OUT_BUFFER(); OUT("end"); OUT_NEWLINE(); }
 ;
 
 stmt_code:
   figured_stmts
-| stmt _SEMILICON
+| stmt _SEMICOLON
 ;
 
 for_while_stmt:
-  _FOR _BR_OPEN stmt _SEMILICON { OUT_NEWLINE(); OUT("while "); }
+  _FOR _BR_OPEN stmt _SEMICOLON { OUT_NEWLINE(); OUT("while "); }
 ;
 
 expr:

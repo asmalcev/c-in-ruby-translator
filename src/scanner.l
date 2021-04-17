@@ -28,10 +28,10 @@ type char|short|signed|unsigned|int|long|float|double
 
 \/\/[^\n]*\n? { LOG("COMMENT %s", yytext); }
 
-"/*"            { BEGIN(COMMENT); LOG("COMMENT %s", yytext); }
-<COMMENT>"*/" { BEGIN(INITIAL);   LOG("%s", yytext); }
+"/*"          { BEGIN(COMMENT); LOG("COMMENT %s", yytext); }
+<COMMENT>"*/" { BEGIN(INITIAL); LOG("%s", yytext);       }
 <COMMENT>\n   { }
-<COMMENT>.    {                   LOG("%s", yytext); }
+<COMMENT>.    { LOG("%s", yytext); }
 
 [ \t\n] ; // ignore all whitespaces and breaklines
 
@@ -91,7 +91,7 @@ type char|short|signed|unsigned|int|long|float|double
 
 
 "," { LOG("COMMA ");           return _COMMA;     }
-";" { LOG("SEMILICON ");       return _SEMILICON; } 
+";" { LOG("SEMICOLON ");       return _SEMICOLON; } 
 "{" { LOG("F_BRACKET OPEN ");  return _fBR_OPEN;  }
 "}" { LOG("F_BRACKET CLOSE "); return _fBR_CLOSE; }
 
