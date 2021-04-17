@@ -174,9 +174,27 @@ func_args:
 
 %%
 
-int main() {
-  yyin          = fopen("examples/code", "r");
-  parser_output = fopen("output.rb", "w");
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    fprintf(stderr, "Input file name not specified\n");
+    exit(1);
+  }
+
+  yyin = fopen(argv[1], "r");
+  if (yyin == NULL) {
+    fprintf(stderr, "Can't open input file\n");
+    exit(1);
+  }
+
+  if (argc == 3) {
+    parser_output = fopen(argv[2], "w");
+  } else {
+    parser_output = fopen("output.rb", "w");
+  }
+  if (parser_output == NULL) {
+    fprintf(stderr, "Can't open output file\n");
+    exit(1);
+  }
 
   buffer = (char *) malloc(BUFFER_SIZE);
 

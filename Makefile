@@ -19,7 +19,7 @@ clean:
 	rm -f $(BUILD_DIR)/*
 
 run: $(BUILD_DIR)/syntaxer
-	$(BUILD_DIR)/syntaxer
+	$(BUILD_DIR)/syntaxer $(ARGS)
 
 rebuild: clean $(BUILD_DIR)/syntaxer
 
