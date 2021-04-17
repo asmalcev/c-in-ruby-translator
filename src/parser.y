@@ -119,7 +119,7 @@ while_stmt:
 ;
 
 for_stmt:
-  for_while_stmt
+  _FOR _BR_OPEN stmt _SEMICOLON { OUT_NEWLINE(); OUT("while "); }
   stmt _SEMICOLON { OUT_NEWLINE(); buffer_mode_active = true;  }
   stmt _BR_CLOSE  { OUT_NEWLINE(); buffer_mode_active = false; }
   stmt_code       { OUT_BUFFER(); OUT("end"); OUT_NEWLINE(); }
@@ -130,14 +130,10 @@ stmt_code:
 | stmt _SEMICOLON
 ;
 
-for_while_stmt:
-  _FOR _BR_OPEN stmt _SEMICOLON { OUT_NEWLINE(); OUT("while "); }
-;
-
 expr:
   number
-| _ID { OUT("%s", $1); }
 | func_call
+| _ID { OUT("%s", $1); }
 | expr operator expr
 | rounded_expr
 | _NOT { OUT("!"); } expr

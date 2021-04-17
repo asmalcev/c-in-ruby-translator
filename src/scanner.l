@@ -22,6 +22,8 @@ digit_or_alpha [a-zA-Z0-9_]
 
 type char|short|signed|unsigned|int|long|float|double
 
+reserved_words BEGIN|class|ensure|nil|self|when|END|def|false|not|super|alias|defined|or|then|yield|and|do|redo|true|begin|in|rescue|undef|elsif|module|retry|unless|end|next|until
+
 %x COMMENT
 
 %%
@@ -39,6 +41,8 @@ type char|short|signed|unsigned|int|long|float|double
 "else"  { LOG("ELSE ");  return _ELSE;  }
 "while" { LOG("WHILE "); return _WHILE; }
 "for"   { LOG("FOR ");   return _FOR;   }
+
+{reserved_words} { lexerror("Reserved name"); }
 
 {type} { LOG("TYPE %s", yytext); sscanf(yytext, "%s", yylval.c_value); return _TYPE; }
 
